@@ -65,7 +65,7 @@ export function WordInput({ onSubmit, setAlertMessage, setAlertType }) {
     };
 
     return (
-        <div className='text-center mt-20'>
+        <div className='text-center mt-10'>
             <div className='relative inline-block mb-4'>
                 {/* container shadow layer */}
                 <div className='absolute top-0 left-0 w-full h-full bg-black opacity-30 rounded-[15px] md:rounded-[30px] transform translate-x-3 translate-y-3 md:translate-x-8 md:translate-y-8 pointer-events-none'></div>

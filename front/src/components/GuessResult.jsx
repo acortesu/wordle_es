@@ -87,13 +87,13 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
                 <div className='relative bg-black p-6 max-w-fit mx-auto rounded-xl md:rounded-[30px]'>
                     <div className="flex flex-row-reverse items-center gap-x-8">
                         {/* Resultado de la palabra */}
-                        <div className="flex flex-col gap-y-2 justify-center">
+                        <div className="flex flex-col gap-y-1 justify-center">
                             {rows.map((row, rowIndex) => (
-                                <div key={rowIndex} className="flex gap-x-2 justify-center">
+                                <div key={rowIndex} className="flex gap-x-1 justify-center">
                                     {row.map((letter, colIndex) => (
                                         <div
                                             key={colIndex}
-                                            className={`h-[27px] w-[27px] text-white font-bold flex items-center justify-center rounded-md ${colors[rowIndex][colIndex]}`}
+                                            className={`h-[18px] w-[18px] md:h-[25px] md:w-[25px] text-[12px] md:text-[16px] text-white font-bold flex items-center justify-center rounded-md ${colors[rowIndex][colIndex]}`}
                                         >
                                             {letter.toUpperCase()}
                                         </div>
@@ -106,7 +106,7 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
                             {keyboard.map((row, rowIndex) => (
                                 <div key={rowIndex} className="flex gap-x-1 justify-center">
                                     {row.map((key, colIndex) => (
-                                        <div key={colIndex} className={`h-[25px] w-[25px] ${key.color} flex items-center justify-center rounded-md text-sm text-white font-bold`}>
+                                        <div key={colIndex} className={`h-[18px] w-[18px] md:h-[25px] md:w-[25px] ${key.color} flex items-center justify-center rounded-md text-[10px] md:text-sm text-white font-bold`}>
                                             {key.letter}
                                         </div>
                                     ))}
