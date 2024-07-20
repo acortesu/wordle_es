@@ -15,7 +15,7 @@ export function App() {
   const [candidate, setCandidate] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  const [reset, setReset] = useState(false); // Estado para reiniciar el juego
+  const [reset, setReset] = useState(false);
 
   const fetchAPI = async (candidate) => {
     try {
@@ -41,19 +41,19 @@ export function App() {
   };
 
   useEffect(() => {
+    console.log("Result updated:", {
+      correctLetters,
+      presentLetters,
+      incorrectLetters,
+      candidate,
+      gameOver,
+      userTries
+    });
   }, [correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries]);
 
   const handleRestart = async () => {
     try {
-      // Reiniciar el estado del juego en el backend
-      const res = await axios.post('http://localhost:8080/api/guess', {
-        candidate: '',
-        word_to_guess: '',
-        user_tries: 0,
-        game_over: true
-      });
-      setWordToGuess(res.data.word_to_guess);
-      setUserTries(res.data.user_tries);
+      setUserTries(0); // Reiniciar el estado de intentos en el frontend
       setGameOver(false);
       setCorrectLetters([]);
       setPresentLetters([]);
@@ -61,7 +61,7 @@ export function App() {
       setCandidate('');
       setAlertMessage('');
       setAlertType('');
-      setReset(prevReset => !prevReset); // Cambiar el estado de reset para activar el reinicio
+      setReset(prevReset => !prevReset); // Forzar el reinicio de componentes dependientes
     } catch (error) {
       console.error("Error restarting the game:", error);
       setAlertMessage('Error reiniciando el juego. Intenta de nuevo.');
@@ -87,7 +87,7 @@ export function App() {
         userTries={userTries}
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
-        reset={reset} // Pasar el estado de reset como prop
+        reset={reset}
       />
       <Alert
         message={alertMessage}
