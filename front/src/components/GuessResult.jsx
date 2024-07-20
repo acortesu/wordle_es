@@ -20,7 +20,7 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
     }, [reset]); // Escuchar cambios en reset para reiniciar el teclado
 
     useEffect(() => {
-        if (!gameOver && (correctLetters.length > 0 || presentLetters.length > 0 || incorrectLetters.length > 0)) {
+        if (correctLetters.length > 0 || presentLetters.length > 0 || incorrectLetters.length > 0) {
             const newRows = [...rows];
             const newColors = [...colors];
             const newKeyboard = keyboard.map(row => row.map(key => ({ ...key })));
@@ -65,14 +65,18 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
             });
 
             setKeyboard(newKeyboard);
-        } else if (gameOver && correctLetters.length === 5) {
+        }
+    }, [correctLetters, presentLetters, incorrectLetters, userTries]);
+
+    useEffect(() => {
+        if (gameOver && correctLetters.length === 5) {
             setAlertMessage('¡Felicidades! Inténtalo otra vez');
             setAlertType('success');
         } else if (gameOver && userTries === 6) {
             setAlertMessage(`Mejor suerte para la próxima. La palabra era ${wordToGuess.toUpperCase()}`);
             setAlertType('gameover');
         }
-    }, [correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries, setAlertMessage, setAlertType, wordToGuess]);
+    }, [gameOver, correctLetters, userTries, wordToGuess, setAlertMessage, setAlertType]);
 
     useEffect(() => {
         // Reiniciar los estados de filas y colores cuando se reinicie el juego

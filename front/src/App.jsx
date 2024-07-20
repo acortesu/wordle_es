@@ -15,7 +15,7 @@ export function App() {
   const [candidate, setCandidate] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  const [reset, setReset] = useState(false); // Para rastrear el reinicio del juego
+  const [reset, setReset] = useState(false); // Estado para reiniciar el juego
 
   const fetchAPI = async (candidate) => {
     try {
@@ -41,13 +41,7 @@ export function App() {
   };
 
   useEffect(() => {
-    console.log("Result updated:", {
-      correctLetters,
-      presentLetters,
-      incorrectLetters,
-      candidate
-    });
-  }, [correctLetters, presentLetters, incorrectLetters, candidate]);
+  }, [correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries]);
 
   const handleRestart = async () => {
     try {
@@ -67,7 +61,7 @@ export function App() {
       setCandidate('');
       setAlertMessage('');
       setAlertType('');
-      setReset(!reset); // Alternar el valor de reset para desencadenar el reinicio
+      setReset(prevReset => !prevReset); // Cambiar el estado de reset para activar el reinicio
     } catch (error) {
       console.error("Error restarting the game:", error);
       setAlertMessage('Error reiniciando el juego. Intenta de nuevo.');
@@ -93,7 +87,7 @@ export function App() {
         userTries={userTries}
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
-        reset={reset}
+        reset={reset} // Pasar el estado de reset como prop
       />
       <Alert
         message={alertMessage}
