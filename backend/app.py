@@ -1,7 +1,6 @@
 import random
 from data import (words)
 
-
 def guess_word(candidate, word_to_guess, user_tries, game_over):
 
     if game_over and not word_to_guess:

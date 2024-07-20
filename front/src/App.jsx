@@ -8,7 +8,7 @@ import { Alert } from './components/Alerts.jsx';
 export function App() {
   const [wordToGuess, setWordToGuess] = useState('');
   const [userTries, setUserTries] = useState(0);
-  const [gameOver, setGameOver] = useState(true); // Inicializar gameOver en true
+  const [gameOver, setGameOver] = useState(true);
   const [correctLetters, setCorrectLetters] = useState([]);
   const [presentLetters, setPresentLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
@@ -25,7 +25,7 @@ export function App() {
         user_tries: userTries,
         game_over: gameOver
       });
-      console.log("Backend Response:", res.data); // Verificar los datos recibidos del backend
+      console.log("Backend Response:", res.data);
       setWordToGuess(res.data.word_to_guess);
       setUserTries(res.data.user_tries);
       setGameOver(res.data.game_over);
@@ -45,15 +45,21 @@ export function App() {
       correctLetters,
       presentLetters,
       incorrectLetters,
-      candidate,
-      gameOver,
-      userTries
+      candidate
     });
-  }, [correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries]);
+  }, [correctLetters, presentLetters, incorrectLetters, candidate]);
 
   const handleRestart = async () => {
     try {
-      setUserTries(0); // Reiniciar el estado de intentos en el frontend
+      // Reiniciar el estado del juego en el backend
+      const res = await axios.post('http://localhost:8080/api/guess', {
+        candidate: '',
+        word_to_guess: '',
+        user_tries: 0,
+        game_over: true
+      });
+      setWordToGuess(res.data.word_to_guess);
+      setUserTries(0);
       setGameOver(false);
       setCorrectLetters([]);
       setPresentLetters([]);
@@ -61,7 +67,7 @@ export function App() {
       setCandidate('');
       setAlertMessage('');
       setAlertType('');
-      setReset(prevReset => !prevReset); // Forzar el reinicio de componentes dependientes
+      setReset(prev => !prev);
     } catch (error) {
       console.error("Error restarting the game:", error);
       setAlertMessage('Error reiniciando el juego. Intenta de nuevo.');

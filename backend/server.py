@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from pydantic import BaseModel
-from pydantic.error_wrappers import ValidationError
+from pydantic import BaseModel, ValidationError
 from app import guess_word
-import random
 
 app = Flask(__name__)
 CORS(app)
@@ -38,16 +36,6 @@ def guess_word_endpoint():
         "game_over": game_over
     }
 
-    return jsonify(response)
-
-@app.route("/api/restart", methods=["POST"])
-def restart_game():
-    word_to_guess = random.choice(words)  # Reiniciar la palabra a adivinar
-    response = {
-        "word_to_guess": word_to_guess,
-        "user_tries": 0,
-        "game_over": False
-    }
     return jsonify(response)
 
 if __name__ == '__main__':
