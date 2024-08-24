@@ -12,18 +12,24 @@ def guess_word(candidate, word_to_guess, user_tries, game_over):
     correct_letter_wrong_index = []
     incorrect_letter = []
 
-    for i, letter in enumerate(candidate.lower()):
-        if i >= len(word_to_guess):
-            continue
-        if letter == word_to_guess[i]:
-            correct_letter_and_index.append({"letter": letter, "index": i})
-        elif letter in word_to_guess:
-            correct_letter_wrong_index.append({"letter": letter, "index": i})
-        else:
-            incorrect_letter.append({"letter": letter, "index": i})
+    print("candidate: ", candidate)
 
-    user_tries += 1
+    is_valid_word = candidate.lower() in words
+    print("is_valid_word: ", is_valid_word)
+
+    if is_valid_word:
+        for i, letter in enumerate(candidate.lower()):
+            if i >= len(word_to_guess):
+                continue
+            if letter == word_to_guess[i]:
+                correct_letter_and_index.append({"letter": letter, "index": i})
+            elif letter in word_to_guess:
+                correct_letter_wrong_index.append({"letter": letter, "index": i})
+            else:
+                incorrect_letter.append({"letter": letter, "index": i})
+
+        user_tries += 1
 
     game_over = user_tries >= 6 or len(correct_letter_and_index) == len(word_to_guess)
 
-    return correct_letter_and_index, correct_letter_wrong_index, incorrect_letter, word_to_guess, user_tries, game_over
+    return correct_letter_and_index, correct_letter_wrong_index, incorrect_letter, word_to_guess, user_tries, game_over,is_valid_word

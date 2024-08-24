@@ -2,33 +2,36 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { esAlphabet } from '../assets/data/lettersData.js';
 
-export function GuessResult({ correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries, setAlertMessage, setAlertType, reset, wordToGuess }) {
-    const [rows, setRows] = useState(Array(6).fill().map(() => Array(5).fill('')));
-    const [colors, setColors] = useState(Array(6).fill().map(() => Array(5).fill('bg-[#AAAAAA]')));
+export function GuessResult({ correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries, setAlertMessage, setAlertType, reset, wordToGuess, isValidWord }) {
+    const [rows, setRows] = useState([Array(5).fill('')]);
+    const [colors, setColors] = useState([Array(5).fill('bg-[#AAAAAA]')]);
     const [keyboard, setKeyboard] = useState(Array(4).fill().map(() => Array(7).fill({ letter: '', color: 'bg-[#AAAAAA]' })));
 
-    // Población inicial del teclado con letras
     useEffect(() => {
         const alphabet = esAlphabet;
         const initialKeyboard = Array(4).fill().map((_, rowIndex) =>
             Array(7).fill().map((_, colIndex) => ({
                 letter: alphabet[rowIndex * 7 + colIndex] || '',
-                color: 'bg-[#AAAAAA]'
+                color: alphabet[rowIndex * 7 + colIndex] ? 'bg-[#AAAAAA]' : 'bg-black'
             }))
         );
         setKeyboard(initialKeyboard);
-    }, [reset]); // Escuchar cambios en reset para reiniciar el teclado
+    }, [reset]);
 
     useEffect(() => {
-        if (correctLetters.length > 0 || presentLetters.length > 0 || incorrectLetters.length > 0) {
+        if (userTries > 0 && (correctLetters.length > 0 || presentLetters.length > 0 || incorrectLetters.length > 0)) {
             const newRows = [...rows];
             const newColors = [...colors];
             const newKeyboard = keyboard.map(row => row.map(key => ({ ...key })));
 
-            // Actualiza las palabras intentadas y los colores basados en el resultado
+            if (newRows.length < userTries) {
+                newRows.push(Array(5).fill(''));
+                newColors.push(Array(5).fill('bg-[#AAAAAA]'));
+            }
+
             correctLetters.forEach(letter => {
                 const { index, letter: char } = letter;
-                const rowIndex = userTries - 1; // Asignar la fila según el intento actual
+                const rowIndex = userTries - 1;
                 newRows[rowIndex][index] = char;
                 newColors[rowIndex][index] = 'bg-[#139449]';
             });
@@ -50,7 +53,6 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
             setRows(newRows);
             setColors(newColors);
 
-            // Actualiza el teclado basado en el resultado
             const allLetters = [
                 ...correctLetters.map(letter => ({ ...letter, correct: true, present: false, incorrect: false })),
                 ...presentLetters.map(letter => ({ ...letter, correct: false, present: true, incorrect: false })),
@@ -66,9 +68,16 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
 
             setKeyboard(newKeyboard);
         }
-    }, [correctLetters, presentLetters, incorrectLetters, userTries]);
 
-    useEffect(() => {
+        if (isValidWord === false) {
+            setAlertMessage('La palabra no existe en nuestro diccionario');
+            setAlertType('warning');
+            setTimeout(() => {
+                setAlertMessage('');
+                setAlertType('');
+            }, 3000); // Ajusta el tiempo según tus necesidades
+        }
+
         if (gameOver && correctLetters.length === 5) {
             setAlertMessage('¡Felicidades! Inténtalo otra vez');
             setAlertType('success');
@@ -76,12 +85,11 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
             setAlertMessage(`Mejor suerte para la próxima. La palabra era ${wordToGuess.toUpperCase()}`);
             setAlertType('gameover');
         }
-    }, [gameOver, correctLetters, userTries, wordToGuess, setAlertMessage, setAlertType]);
+    }, [correctLetters, presentLetters, incorrectLetters, candidate, gameOver, userTries, setAlertMessage, setAlertType, wordToGuess, isValidWord]);
 
     useEffect(() => {
-        // Reiniciar los estados de filas y colores cuando se reinicie el juego
-        setRows(Array(6).fill().map(() => Array(5).fill('')));
-        setColors(Array(6).fill().map(() => Array(5).fill('bg-[#AAAAAA]')));
+        setRows([Array(5).fill('')]);
+        setColors([Array(5).fill('bg-[#AAAAAA]')]);
     }, [reset]);
 
     return (
@@ -90,7 +98,6 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
                 <div className='absolute top-0 left-0 w-full h-full bg-black opacity-30 rounded-[15px] md:rounded-[30px] transform translate-x-3 translate-y-3 md:translate-x-8 md:translate-y-8 pointer-events-none'></div>
                 <div className='relative bg-black p-6 max-w-fit mx-auto rounded-xl md:rounded-[30px]'>
                     <div className="flex flex-row-reverse items-center gap-x-8">
-                        {/* Resultado de la palabra */}
                         <div className="flex flex-col gap-y-1 justify-center">
                             {rows.map((row, rowIndex) => (
                                 <div key={rowIndex} className="flex gap-x-1 justify-center">
@@ -105,7 +112,6 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
                                 </div>
                             ))}
                         </div>
-                        {/* Teclado */}
                         <div className="flex flex-col gap-y-1 justify-center">
                             {keyboard.map((row, rowIndex) => (
                                 <div key={rowIndex} className="flex gap-x-1 justify-center">
@@ -124,7 +130,6 @@ export function GuessResult({ correctLetters, presentLetters, incorrectLetters, 
     );
 }
 
-// Definición de PropTypes
 GuessResult.propTypes = {
     correctLetters: PropTypes.arrayOf(PropTypes.shape({
         index: PropTypes.number.isRequired,
@@ -141,6 +146,7 @@ GuessResult.propTypes = {
     candidate: PropTypes.string.isRequired,
     wordToGuess: PropTypes.string.isRequired,
     gameOver: PropTypes.bool.isRequired,
+    isValidWord: PropTypes.bool.isRequired,
     userTries: PropTypes.number.isRequired,
     setAlertMessage: PropTypes.func.isRequired,
     setAlertType: PropTypes.func.isRequired,
