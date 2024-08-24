@@ -45,7 +45,7 @@ words = [
     "razas", "razon", "regir", "regla", "reino", "remar", "resta",
     "ritmo", "robot", "roble", "rocas", "rodar", "rompe", "rosar",
     "rueda", "ruina", "rumba", "rural", "saber", "sabor", "sacar",
-    "sacos", "salir", "salon", "salud", "salvo", "sarta",
+    "sacos", "salir", "salon", "salud", "salvo", "sarta", "rosas",
     "sauna", "secar", "sello", "selva", "seman", "seres", "seseo",
     "sexos", "silba", "sismo", "sitio", "sobra", "solar", "somos",
     "sonar", "sorda", "sordo", "suben", "sueca", "sufro", "super",
@@ -62,5 +62,8 @@ words = [
     "verbo", "verde", "verse", "vetar", "viaje", "vidas", "vimos",
     "vinos", "virus", "vital", "vivir", "vivos", "vocal", "volar",
     "voraz", "votar", "votos", "vulgo", "yacer", "yarda", "yegua",
-    "yerba", "yerno", "yunta", "zarco", "zona", "zorro", "zurdo"
+    "yerba", "yerno", "yunta", "zarco", "zona", "zorro", "zurdo",
+    "rezar", "rezas", "rezos", "rojas", "rojos", "playa", "plato",
+    "rajon", "raton", "matar", "malla", "corre", "lobas"
+
 ]

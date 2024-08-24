@@ -25,7 +25,7 @@ def guess_word_endpoint():
     user_tries = guess_request.user_tries
     game_over = guess_request.game_over
 
-    correct_letter_and_index, correct_letter_wrong_index, incorrect_letter, word_to_guess, user_tries, game_over = guess_word(candidate, word_to_guess, user_tries, game_over)
+    correct_letter_and_index, correct_letter_wrong_index, incorrect_letter, word_to_guess, user_tries, game_over, is_valid_word = guess_word(candidate, word_to_guess, user_tries, game_over)
     
     response = {
         "word_to_guess": word_to_guess,
@@ -33,7 +33,8 @@ def guess_word_endpoint():
         "correct_letter_wrong_index": correct_letter_wrong_index,
         "incorrect_letter": incorrect_letter,
         "user_tries": user_tries,
-        "game_over": game_over
+        "game_over": game_over,
+        "is_valid_word": is_valid_word
     }
 
     return jsonify(response)

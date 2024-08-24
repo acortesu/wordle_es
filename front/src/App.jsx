@@ -12,6 +12,7 @@ export function App() {
   const [correctLetters, setCorrectLetters] = useState([]);
   const [presentLetters, setPresentLetters] = useState([]);
   const [incorrectLetters, setIncorrectLetters] = useState([]);
+  const [isValidWord, setIsValidWord] = useState(true);
   const [candidate, setCandidate] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
@@ -32,6 +33,7 @@ export function App() {
       setCorrectLetters(res.data.correct_letter_and_index);
       setPresentLetters(res.data.correct_letter_wrong_index);
       setIncorrectLetters(res.data.incorrect_letter);
+      setIsValidWord(res.data.is_valid_word);
       setCandidate(candidate);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -45,7 +47,8 @@ export function App() {
       correctLetters,
       presentLetters,
       incorrectLetters,
-      candidate
+      candidate,
+      isValidWord
     });
   }, [correctLetters, presentLetters, incorrectLetters, candidate]);
 
@@ -91,6 +94,7 @@ export function App() {
         candidate={candidate}
         gameOver={gameOver}
         userTries={userTries}
+        isValidWord={isValidWord}
         setAlertMessage={setAlertMessage}
         setAlertType={setAlertType}
         reset={reset}
