@@ -12,10 +12,7 @@ def guess_word(candidate, word_to_guess, user_tries, game_over):
     correct_letter_wrong_index = []
     incorrect_letter = []
 
-    print("candidate: ", candidate)
-
     is_valid_word = candidate.lower() in words
-    print("is_valid_word: ", is_valid_word)
 
     if is_valid_word:
         for i, letter in enumerate(candidate.lower()):
