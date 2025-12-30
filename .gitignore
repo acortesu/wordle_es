@@ -8,6 +8,9 @@
 /backend/.env
 /backend/.env.*
 
+# Serverless build artifacts
+backend/.serverless/
+
 # Frontend
 /front/node_modules/
 /front/dist/
