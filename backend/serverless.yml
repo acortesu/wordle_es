@@ -8,14 +8,23 @@ provider:
   region: us-east-1
   stage: prod
 
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+      allowedMethods:
+        - POST
+        - OPTIONS
+
 functions:
   api:
     handler: app/handler.handler
     events:
-      - http:
+      - httpApi:
           path: /api/guess
-          method: post
-          cors: true
+          method: POST
 
 package:
   patterns:
