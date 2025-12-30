@@ -1,5 +1,5 @@
 import random
-from data import (words)
+from app.data import (words)
 
 def guess_word(candidate, word_to_guess, user_tries, game_over):
 

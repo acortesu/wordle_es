@@ -4,21 +4,30 @@ frameworkVersion: "4"
 
 provider:
   name: aws
-  runtime: python3.11
+  runtime: python3.10
   region: us-east-1
   stage: prod
 
 functions:
   api:
-    handler: handler.handler
+    handler: app/handler.handler
     events:
-      - httpApi:
+      - http:
           path: /api/guess
           method: post
+          cors: true
 
 package:
   patterns:
     - api/**
     - app/**
-    - handler.py
     - requirements.txt
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+    slim: true
+    pythonBin: python3.10
