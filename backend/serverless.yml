@@ -1,0 +1,24 @@
+service: wordle-backend
+
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  stage: prod
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi:
+          path: /api/guess
+          method: post
+
+package:
+  patterns:
+    - api/**
+    - app/**
+    - handler.py
+    - requirements.txt
