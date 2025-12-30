@@ -5,6 +5,8 @@ import { WordInput } from "./components/WordInput.jsx";
 import { GuessResult } from "./components/GuessResult.jsx";
 import { Alert } from './components/Alerts.jsx';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export function App() {
   const [wordToGuess, setWordToGuess] = useState('');
   const [userTries, setUserTries] = useState(0);
@@ -20,7 +22,7 @@ export function App() {
 
   const fetchAPI = async (candidate) => {
     try {
-      const res = await axios.post('http://localhost:8080/api/guess', {
+      const res = await axios.post(`${API_BASE_URL}/api/guess`, {
         candidate: candidate,
         word_to_guess: wordToGuess,
         user_tries: userTries,
@@ -55,7 +57,7 @@ export function App() {
   const handleRestart = async () => {
     try {
       // Reiniciar el estado del juego en el backend
-      const res = await axios.post('http://localhost:8080/api/guess', {
+      const res = await axios.post(`${API_BASE_URL}/api/guess`, {
         candidate: '',
         word_to_guess: '',
         user_tries: 0,

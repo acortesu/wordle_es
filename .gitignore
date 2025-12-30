@@ -16,6 +16,7 @@ backend/.serverless/
 /front/dist/
 /front/build/
 /front/.eslintcache
+/front/.env
 
 # Tailwind CSS
 /front/public/css/tailwind.css
