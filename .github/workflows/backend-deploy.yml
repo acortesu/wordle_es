@@ -29,8 +29,8 @@ jobs:
           python-version: "3.10"
 
       # Instalar Serverless Framework
-      - name: Install Serverless Framework
-        run: npm install -g serverless
+      - name: Install Serverless
+        run: npm install -g serverless@3
 
       # Instalar dependencias del backend
       - name: Install backend dependencies
