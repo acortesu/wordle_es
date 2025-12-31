@@ -1,6 +1,6 @@
 service: wordle-backend
 
-frameworkVersion: "4"
+frameworkVersion: ">=3 <4"
 
 provider:
   name: aws
