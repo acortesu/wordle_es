@@ -13,21 +13,21 @@ The primary goal of this project is learning and showcasing DevOps practices, in
 ## 🧱 Architecture (Current State)
 
 User
- ↓
+↓
 Browser
- ↓
+↓
 CloudFront (HTTPS)
- ↓
+↓
 AWS S3 (Static Website Hosting)
- ↓
+↓
 React + Vite Frontend
- ↓
+↓
 HTTPS (REST)
- ↓
+↓
 AWS API Gateway
- ↓
+↓
 AWS Lambda (Python 3.10)
- ↓
+↓
 Flask API (Game logic)
 
 ---
