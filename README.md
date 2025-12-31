@@ -1,32 +1,40 @@
 # Wordle ES – DevOps Portfolio Project
 
-This project is part of my **DevOps portfolio** and focuses on designing, deploying, and debugging a real-world **CI/CD-ready cloud architecture** using AWS and GitHub Actions.
+This project is part of my DevOps portfolio and focuses on designing, deploying, and operating a real-world cloud architecture with full CI/CD automation using AWS and GitHub Actions.
 
 The application is a Spanish Wordle game composed of:
-- A **React + Vite frontend** deployed as a static website
-- A **Python Flask backend** deployed as a serverless API
+	•	A React + Vite frontend deployed as a static website
+	•	A Python Flask backend deployed as a serverless API
 
-The main goal of this project is **learning and showcasing DevOps practices**, not just making the app work.
+The primary goal of this project is learning and showcasing DevOps practices, infrastructure decisions, and CI/CD workflows — not just making the application work.
 
 ---
 
 ## 🧱 Architecture (Current State)
 
 User
-↓
+ ↓
 Browser
-↓
+ ↓
+CloudFront (HTTPS)
+ ↓
 AWS S3 (Static Website Hosting)
-↓
+ ↓
 React + Vite Frontend
-↓
-HTTPS
-↓
-AWS API Gateway (REST)
-↓
+ ↓
+HTTPS (REST)
+ ↓
+AWS API Gateway
+ ↓
 AWS Lambda (Python 3.10)
-↓
+ ↓
 Flask API (Game logic)
+
+---
+
+## 🖼️ Architecture Diagram
+
+![Architecture Diagram](docs/architecture.png)
 
 ---
 
@@ -36,7 +44,8 @@ Flask API (Game logic)
 - React 18
 - Vite
 - Tailwind CSS
-- Static website hosted on AWS S3
+- AWS S3 (static hosting)
+- AWS CloudFront (CDN + HTTPS)
 
 ### Backend
 - Python 3.10
@@ -45,87 +54,132 @@ Flask API (Game logic)
 - AWS API Gateway (REST)
 
 ### DevOps / Cloud
-- AWS S3 (Static Website Hosting)
+- AWS S3
+- AWS CloudFront
 - AWS Lambda
 - AWS API Gateway
-- Serverless Framework
-- GitHub (CI/CD pipelines in progress)
+- Serverless Framework (v3)
+- GitHub Actions (CI/CD)
+- AWS IAM (least-privilege credentials)
 
 ---
 
 ## 🔍 Key DevOps Decisions
 
 ### Static Frontend Deployment
-The frontend is deployed as a static website to:
+The frontend is deployed as a static site to:
 - Reduce operational complexity
-- Minimize cost
+- Minimize infrastructure cost
 - Improve scalability and performance
-- Decouple frontend and backend deployments
+- Fully decouple frontend and backend deployments
 
-This architecture fits perfectly with S3-based static hosting and CI/CD pipelines.
+This approach fits naturally with **S3 + CloudFront** and enables fast, reliable CI/CD pipelines.
+
+---
+
+### Serverless Backend Architecture
+The backend is deployed using **AWS Lambda + API Gateway**, which provides:
+- Automatic scaling
+- Pay-per-request pricing
+- No server management
+- Clear separation between application logic and infrastructure
 
 ---
 
 ### Flask without Mangum
-Flask is a **WSGI** framework, not ASGI.
+Flask is a **WSGI** framework.  
+Instead of using Mangum (ASGI adapter), the backend uses a **custom Lambda handler** to:
 
-Instead of using Mangum (an ASGI adapter), the backend uses a **custom Lambda handler** to:
 - Maintain full control over the request lifecycle
-- Avoid runtime incompatibilities
-- Simplify debugging in AWS Lambda environments
-- Better understand how API Gateway events are handled
+- Avoid runtime and adapter incompatibilities
+- Simplify debugging in AWS Lambda
+- Better understand API Gateway → Lambda integration
 
-This approach closely reflects how many production Flask APIs are deployed in serverless environments.
+This mirrors how many production Flask APIs are deployed in serverless environments.
 
 ---
 
-## 🚀 Backend Deployment Flow
+## 🚀 CI/CD Pipelines
 
-1. Flask application is packaged using Serverless Framework
-2. Deployed to AWS Lambda (Python 3.10 runtime)
-3. Exposed via AWS API Gateway (REST)
-4. Frontend communicates with the backend via HTTPS
+### Backend Pipeline
+Triggered on changes to `/backend`:
+
+1. Install Node.js and Python dependencies
+2. Install Serverless Framework and plugins locally
+3. Package Flask application
+4. Deploy to AWS Lambda using Serverless Framework
+5. Update API Gateway endpoint automatically
+
+### Frontend Pipeline
+Triggered on changes to `/front`:
+
+1. Install frontend dependencies
+2. Build static assets with Vite
+3. Upload build artifacts to S3 (`/wordle`)
+4. Invalidate CloudFront cache to ensure immediate updates
+
+Both pipelines are fully automated and run via **GitHub Actions**.
+
+---
+
+## 🔐 Secrets Management
+
+- AWS credentials are stored securely using **GitHub Actions Secrets**
+- No secrets are committed to the repository
+- Environment-specific values are injected at build time
 
 ---
 
 ## 🧪 Validation & Debugging
 
-- Backend tested using `curl`
-- CloudWatch Logs used extensively for debugging
-- End-to-end flow validated:
-  - API Gateway → Lambda → Flask → Game logic
+- Backend tested using `curl` and browser requests
+- CloudWatch Logs used extensively for runtime debugging
+- End-to-end validation performed:
+  - CloudFront → S3 → Frontend → API Gateway → Lambda → Flask
 
-Several real-world issues were identified and fixed during deployment, including:
-- Runtime import errors
-- Packaging issues
-- API Gateway integration mismatches
+Several real-world issues were identified and resolved, including:
+- Serverless framework version mismatches
+- Plugin availability in CI environments
+- CORS configuration issues
+- API Gateway integration errors
+- Packaging and dependency resolution problems
+
+---
+
+## 🌐 Live Deployment
+
+- Frontend available via custom domain and CloudFront  
+- Backend exposed via HTTPS API Gateway endpoint  
+- Frontend and backend fully integrated in production  
 
 ---
 
 ## 📌 Current Status
 
-✅ Frontend served from AWS S3  
-✅ Backend deployed and responding correctly  
-🚧 CI/CD pipelines using GitHub Actions — **in progress**  
-🚧 Custom domain integration — **pending**
+✅ Frontend deployed via S3 + CloudFront  
+✅ Backend deployed via Lambda + API Gateway  
+✅ CI/CD pipelines fully operational  
+✅ Dev / Prod environments separated  
+✅ Custom domain configured with HTTPS  
 
 ---
 
-## 🧠 Learning Objectives
+## 🧠 Learning Outcomes
 
-- Design and implement CI/CD pipelines using GitHub Actions
-- Apply Infrastructure as Code concepts
-- Manage secrets securely
-- Separate environments (dev / prod)
-- Document and explain cloud architectures clearly
-- Debug real serverless runtime issues
+- Designing cloud-native architectures
+- Building reproducible CI/CD pipelines
+- Applying Infrastructure as Code principles
+- Managing secrets securely
+- Debugging real serverless production issues
+- Making informed architectural trade-offs
+- Communicating technical decisions clearly
 
 ---
 
-## 🔜 Next Steps
+## 🔜 Possible Next Enhancements
 
-- Connect frontend to the production API endpoint
-- Automate frontend deployment to S3 using GitHub Actions
-- Automate backend deployment using GitHub Actions
-- Introduce environment separation
-- Improve logging and observability
+- Add observability (structured logs, metrics)
+- Improve frontend state handling
+- Introduce backend persistence (DynamoDB)
+- Add automated tests to pipelines
+- Implement blue/green or canary deployments
