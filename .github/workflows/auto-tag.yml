@@ -29,3 +29,10 @@ jobs:
           TAG="v${{ steps.version.outputs.version }}"
           git tag $TAG
           git push origin $TAG
+    
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+            name: Release v${{ steps.version.outputs.version }}
+            tag_name: v${{ steps.version.outputs.version }}
+            generate_release_notes: true
