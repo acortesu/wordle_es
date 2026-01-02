@@ -41,7 +41,7 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: Release v${{ steps.version.outputs.version }}
           body: |
-            ## 🚀 Latest change
+            ## Latest change
             - ${{ steps.last_commit.outputs.message }}
 
             ---
