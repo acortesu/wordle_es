@@ -29,4 +29,4 @@ jobs:
 
           git add VERSION
           git commit -m "chore(release): bump version to $NEW_VERSION"
-          git push
+          git push 
