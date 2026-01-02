@@ -1,4 +1,4 @@
-name: Auto Tag & Release
+name: Auto Version & Release
 
 on:
   push:
@@ -6,44 +6,78 @@ on:
       - main
 
 permissions:
-  contents: write   # permite crear tags y releases
+  contents: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Read version
-        id: version
+      - name: Read current version
+        id: current
         run: |
-          VERSION=$(cat VERSION)
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
 
-      - name: Create git tag
+      - name: Determine version bump
+        id: bump
         run: |
-          TAG="v${{ steps.version.outputs.version }}"
-          git tag $TAG
-          git push origin $TAG
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
 
-      - name: Get last commit message
-        id: last_commit
+          if [[ "$COMMIT_MSG" == *"BREAKING CHANGE"* ]] || [[ "$COMMIT_MSG" == *"!"* ]]; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" == feat:* ]]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif [[ "$COMMIT_MSG" == fix:* ]]; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Stop if no release needed
+        if: steps.bump.outputs.type == 'none'
         run: |
-          echo "message=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
+          echo "No version bump required"
+          exit 0
+
+      - name: Bump version
+        id: new_version
+        run: |
+          IFS='.' read MAJOR MINOR PATCH <<< "${{ steps.current.outputs.version }}"
+
+          case "${{ steps.bump.outputs.type }}" in
+            major)
+              MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+            minor)
+              MINOR=$((MINOR+1)); PATCH=0 ;;
+            patch)
+              PATCH=$((PATCH+1)) ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo "$NEW_VERSION" > VERSION
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): bump version to ${{ steps.new_version.outputs.version }}"
+          git push
+
+      - name: Create tag
+        run: |
+          git tag v${{ steps.new_version.outputs.version }}
+          git push origin v${{ steps.new_version.outputs.version }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: Release v${{ steps.version.outputs.version }}
-          body: |
-            ## Latest change
-            - ${{ steps.last_commit.outputs.message }}
-
-            ---
-            Auto-generated release notes below
+          tag_name: v${{ steps.new_version.outputs.version }}
+          name: Release v${{ steps.new_version.outputs.version }}
           generate_release_notes: true
