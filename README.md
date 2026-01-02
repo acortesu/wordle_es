@@ -185,3 +185,29 @@ Several real-world issues were identified and resolved, including:
 - Introduce backend persistence (DynamoDB)
 - Add automated tests to pipelines
 - Implement blue/green or canary deployments
+
+---
+
+## 🌱 Environment Separation
+
+This project follows a basic environment separation strategy to reduce risk and improve deployment safety.
+
+### Environments
+
+- **dev**
+  - Used for development and testing
+  - Backend deployed to a separate API Gateway and Lambda
+  - Allows faster iteration and debugging
+
+- **prod**
+  - Used for production traffic
+  - Stable API endpoints
+  - Protected by branch rules and release process
+
+### Environment control
+
+- Backend deployments are controlled via Serverless Framework stages
+- Frontend environment is configured via build-time environment variables
+- GitHub Environments manage secrets and deployment context
+
+This approach mirrors real-world DevOps practices while remaining lightweight and cost-effective.
