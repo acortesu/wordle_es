@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write   # 👈 ESTO ES LA CLAVE
+  contents: write   # necesario para tags y releases
 
 jobs:
   tag:
@@ -29,10 +29,23 @@ jobs:
           TAG="v${{ steps.version.outputs.version }}"
           git tag $TAG
           git push origin $TAG
-    
+
+      - name: Get last commit message
+        id: last_commit
+        run: |
+          echo "message=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-            name: Release v${{ steps.version.outputs.version }}
-            tag_name: v${{ steps.version.outputs.version }}
-            generate_release_notes: true
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          body: |
+            ## 🚀 Latest change
+            - ${{ steps.last_commit.outputs.message }}
+
+            ---
+            Auto-generated release notes below
