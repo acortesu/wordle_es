@@ -1,15 +1,17 @@
 name: Auto Tag Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Version Bump (patch)"]
+    types:
+      - completed
 
 permissions:
-  contents: write   # necesario para tags y releases
+  contents: write
 
 jobs:
   tag:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -29,23 +31,3 @@ jobs:
           TAG="v${{ steps.version.outputs.version }}"
           git tag $TAG
           git push origin $TAG
-
-      - name: Get last commit message
-        id: last_commit
-        run: |
-          echo "message=$(git log -1 --pretty=%s)" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.version.outputs.version }}
-          name: Release v${{ steps.version.outputs.version }}
-          generate_release_notes: true
-          body: |
-            ## Latest change
-            - ${{ steps.last_commit.outputs.message }}
-
-            ---
-            Auto-generated release notes below
