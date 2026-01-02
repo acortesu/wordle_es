@@ -211,3 +211,15 @@ This project follows a basic environment separation strategy to reduce risk and 
 - GitHub Environments manage secrets and deployment context
 
 This approach mirrors real-world DevOps practices while remaining lightweight and cost-effective.
+
+---
+
+## 🔖 Versioning & Releases
+
+This project follows **Semantic Versioning (SemVer)**:
+
+- **MAJOR** – Breaking changes
+- **MINOR** – Backward-compatible features
+- **PATCH** – Bug fixes and small improvements
+
+Releases are created from the `main` branch and represent stable, production-ready versions of the application.
