@@ -1,7 +1,14 @@
+import os
 from flask import Flask, request, jsonify
 from app.app import guess_word
+from flask_cors import CORS
+
+STAGE = os.getenv("STAGE", "local")
 
 app = Flask(__name__)
+
+if STAGE == "local":
+    CORS(app)
 
 @app.route("/api/guess", methods=["POST"])
 def guess():
