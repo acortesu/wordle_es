@@ -42,4 +42,9 @@ jobs:
 
       - name: Deploy backend with Serverless
         working-directory: backend
-        run: npx serverless deploy --stage prod
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            npx serverless deploy --stage prod
+          else
+            npx serverless deploy --stage dev
+          fi
