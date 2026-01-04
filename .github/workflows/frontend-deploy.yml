@@ -3,10 +3,12 @@ name: Frontend CI/CD (Wordle)
 on:
   push:
     branches:
-      - main
       - develop
     paths:
       - "front/**"
+
+  release:
+    types: [published]
 
 permissions:
   contents: read
