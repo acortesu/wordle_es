@@ -2,6 +2,8 @@ name: Backend CI/CD (Lambda)
 
 on:
   push:
+    branches:
+      - develop
     paths:
       - "backend/**"
     branches:
@@ -13,24 +15,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install backend Node dependencies
+      - name: Install Node deps
         working-directory: backend
         run: npm install
 
-      - name: Install Python dependencies
+      - name: Install Python deps
         working-directory: backend
         run: pip install -r requirements.txt
 
@@ -41,11 +40,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy backend with Serverless
+      - name: Deploy backend
         working-directory: backend
         run: |
-          if [ "${{ github.ref_name }}" = "main" ]; then
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "🚀 Deploying BACKEND to PROD"
             npx serverless deploy --stage prod
           else
+            echo "🧪 Deploying BACKEND to DEV"
             npx serverless deploy --stage dev
           fi

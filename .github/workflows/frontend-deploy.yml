@@ -1,10 +1,17 @@
-name: Frontend CI/CD - Wordle
+name: Frontend CI/CD (Wordle)
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - develop
     paths:
       - "front/**"
+
+  release:
+    types: [published]
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
@@ -23,24 +30,39 @@ jobs:
         working-directory: front
         run: npm ci
 
+      # 🧠 Decide environment
+      - name: Set environment variables
+        id: env
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            echo "stage=production" >> $GITHUB_OUTPUT
+            echo "bucket=${{ secrets.S3_BUCKET_PROD }}" >> $GITHUB_OUTPUT
+            echo "distribution=${{ secrets.CLOUDFRONT_DIST_PROD }}" >> $GITHUB_OUTPUT
+          else
+            echo "stage=development" >> $GITHUB_OUTPUT
+            echo "bucket=${{ secrets.S3_BUCKET_DEV }}" >> $GITHUB_OUTPUT
+            echo "distribution=${{ secrets.CLOUDFRONT_DIST_DEV }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build frontend
         working-directory: front
-        run: npm run build
+        run: |
+          npm run build -- --mode ${{ steps.env.outputs.stage }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Deploy to S3
         working-directory: front
         run: |
-          aws s3 sync dist s3://${{ secrets.S3_BUCKET_NAME }}/wordle --delete
+          aws s3 sync dist s3://${{ steps.env.outputs.bucket }}/wordle --delete
 
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id ${{ steps.env.outputs.distribution }} \
             --paths "/wordle/*"
