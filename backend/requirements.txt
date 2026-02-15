@@ -2,3 +2,4 @@ Werkzeug==2.3.7
 pydantic<2
 flask
 flask-cors
+boto3
