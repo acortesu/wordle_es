@@ -45,13 +45,8 @@ jobs:
                 echo "type=none" >> $GITHUB_OUTPUT
             fi
 
-      - name: Stop if no release needed
-        if: steps.bump.outputs.type == 'none'
-        run: |
-          echo "No version bump required"
-          exit 0
-
       - name: Bump version
+        if: steps.bump.outputs.type != 'none'
         id: new_version
         run: |
           IFS='.' read MAJOR MINOR PATCH <<< "${{ steps.current.outputs.version }}"
@@ -70,6 +65,7 @@ jobs:
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Commit version bump
+        if: steps.bump.outputs.type != 'none'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -86,11 +82,13 @@ jobs:
           git push origin main
 
       - name: Create tag
+        if: steps.bump.outputs.type != 'none'
         run: |
           git tag v${{ steps.new_version.outputs.version }}
           git push origin v${{ steps.new_version.outputs.version }}
 
       - name: Create GitHub Release
+        if: steps.bump.outputs.type != 'none'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.new_version.outputs.version }}
