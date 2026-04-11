@@ -10,6 +10,7 @@ provider:
 
   environment:
     STAGE: ${self:provider.stage}
+    WORDS_TABLE: wordle_words
 
   httpApi:
     cors:
