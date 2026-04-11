@@ -45,6 +45,15 @@ export function App() {
   };
 
   useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://ai-chat-platform-staging.up.railway.app/widget.js';
+    script.dataset.clientId = '4259bfe6-b14b-439c-aa82-2839ca612c28';
+    script.dataset.apiUrl = 'https://ai-chat-platform-staging.up.railway.app';
+    document.body.appendChild(script);
+    return () => document.body.removeChild(script);
+  }, []);
+
+  useEffect(() => {
     console.log("Result updated:", {
       correctLetters,
       presentLetters,
